@@ -1,2 +1,2 @@
 # esp32-berry-lang
- esp32-berry-lang with LittlFS
+## Simple implementation of Berry lang for ESP32 with LittleFS on internal flash
