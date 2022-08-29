@@ -1,6 +1,4 @@
 /*
- * From Tasmota: xdrv_52_9_berry.ino - Berry scripting language
- *
  * Copyright 2022 Emiliano Gonzalez (egonzalez . hiperion @ gmail . com))
  * * Project Site: https://github.com/hiperiondev/esp32-berry-lang *
  *
@@ -8,6 +6,8 @@
  *    Berry (https://github.com/berry-lang/berry)
  *    LittleFS port for ESP-IDF (https://github.com/joltwallet/esp_littlefs)
  *    Lightweight TFTP server library (https://github.com/lexus2k/libtftp)
+ *    esp32 run berry language (https://github.com/HoGC/esp32_berry)
+ *    Tasmota (https://github.com/arendst/Tasmota)
  *    Others (see individual files)
  *
  *    please contact their authors for more information.
