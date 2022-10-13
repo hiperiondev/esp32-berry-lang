@@ -290,7 +290,7 @@ int be_ctypes_setmember(bvm *vm) {
 
     // If the value is a pointer, replace with an int of same value (works only on 32 bits CPU)
     if (be_iscomptr(vm, 3) || be_isstring(vm, 3)) {
-        const void* v;
+        void* v;
         if (be_iscomptr(vm, 3)) {
             v = be_tocomptr(vm, 3);
         } else {
