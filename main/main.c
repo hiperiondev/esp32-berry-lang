@@ -55,7 +55,7 @@ static bbool is_multline(bvm *vm) {
     if (be_top(vm) >= 1) {
         const char *msg = be_tostring(vm, -1);
         size_t len = strlen(msg);
-        if (len > 5) { /* multi-line text if the error message is 'EOS' at the end */
+        if (len > 5) { // multi-line text if the error message is 'EOS' at the end
             return !strcmp(msg + len - 5, "'EOS'");
         }
     }
@@ -65,26 +65,26 @@ static bbool is_multline(bvm *vm) {
 static int try_return(bvm *vm, const char *line) {
     int res, idx;
     line = be_pushfstring(vm, "return (%s)", line);
-    idx = be_absindex(vm, -1); /* get the source text absolute index */
-    res = be_loadbuffer(vm, "stdin", line, strlen(line)); /* compile line */
-    be_remove(vm, idx); /* remove source string */
+    idx = be_absindex(vm, -1); // get the source text absolute index
+    res = be_loadbuffer(vm, "stdin", line, strlen(line)); // compile line
+    be_remove(vm, idx); // remove source string
     return res;
 }
 
 static int call_script(bvm *vm) {
-    int res = be_pcall(vm, 0); /* call the main function */
+    int res = be_pcall(vm, 0); // call the main function
     switch (res) {
-        case BE_OK: /* execution succeed */
-            if (!be_isnil(vm, -1)) { /* print return value when it's not nil */
+        case BE_OK: // execution succeed
+            if (!be_isnil(vm, -1)) { // print return value when it's not nil
                 be_dumpvalue(vm, -1);
             }
-            be_pop(vm, 1); /* pop the result value */
+            be_pop(vm, 1); // pop the result value
             break;
-        case BE_EXCEPTION: /* vm run error */
+        case BE_EXCEPTION: // vm run error
             be_dumpexcept(vm);
-            be_pop(vm, 1); /* pop the function value */
+            be_pop(vm, 1); // pop the function value
             break;
-        default: /* BE_EXIT or BE_MALLOC_FAIL */
+        default: // BE_EXIT or BE_MALLOC_FAIL
             return res;
     }
     return 0;
@@ -93,25 +93,25 @@ static int call_script(bvm *vm) {
 int repl_line(bvm *vm, char *line) {
     int res;
     if (is_multline(vm)) {
-        be_pop(vm, 2); /* pop exception values */
+        be_pop(vm, 2); // pop exception values
         be_pushfstring(vm, "\n%s", line);
         be_strconcat(vm, -2);
-        be_pop(vm, 1); /* pop new line */
+        be_pop(vm, 1); // pop new line
     } else {
         res = try_return(vm, line);
         if (be_getexcept(vm, res) == BE_SYNTAX_ERROR) {
-            be_pop(vm, 2); /* pop exception values */
+            be_pop(vm, 2); // pop exception values
             be_pushstring(vm, line);
         } else {
             goto RUN;
         }
     }
-    const char *src = be_tostring(vm, -1); /* get source code */
-    int idx = be_absindex(vm, -1); /* get the source text absolute index */
-    /* compile source line */
+    const char *src = be_tostring(vm, -1); // get source code
+    int idx = be_absindex(vm, -1); // get the source text absolute index
+    // compile source line
     res = be_loadbuffer(vm, "stdin", src, strlen(src));
     if (!res || !is_multline(vm)) {
-        be_remove(vm, idx); /* remove source code */
+        be_remove(vm, idx); // remove source code
         goto RUN;
     }
 
@@ -142,18 +142,18 @@ void repl_task(void *arg) {
     setvbuf(stdin, NULL, _IONBF, 0);
     setvbuf(stdout, NULL, _IONBF, 0);
 
-    /* Install UART driver for interrupt-driven reads and writes */
+    // Install UART driver for interrupt-driven reads and writes
     ESP_ERROR_CHECK(uart_driver_install( (uart_port_t)CONSOLE_UART_CHANNEL, 256, 0, 0, NULL, 0 ));
 
-    /* Tell VFS to use UART driver */
+    // Tell VFS to use UART driver
     esp_vfs_dev_uart_use_driver(CONSOLE_UART_CHANNEL);
     esp_vfs_dev_uart_port_set_rx_line_endings(CONSOLE_UART_CHANNEL, ESP_LINE_ENDINGS_CR);
-    /* Move the caret to the beginning of the next line on '\n' */
+    // Move the caret to the beginning of the next line on '\n'
     esp_vfs_dev_uart_port_set_tx_line_endings(CONSOLE_UART_CHANNEL, ESP_LINE_ENDINGS_CRLF);
 
     probe_status = linenoiseProbe();
     if (probe_status) {
-        /* zero indicates success */
+        // zero indicates success
         linenoiseSetDumbMode(1);
         printf("\r\n"
                 "Your terminal application does not support escape sequences.\n\n"
@@ -169,14 +169,14 @@ void repl_task(void *arg) {
     bool status = BerryInit(&vm, NULL);
     printf("< BerryInit: %s >\n\n", status ? "ok" : "fail!");
 
-    printf("-- Minimal test --\n");
-    be_loadstring(vm, "print('Hello Berry')"); // Compile test code
-    be_pcall(vm, 0); // Call function
-    be_loadstring(vm, "a=10");
-    be_pcall(vm, 0);
-    be_loadstring(vm, "print(a)");
-    be_pcall(vm, 0);
-    printf("------------------\n\n");
+    //printf("-- Minimal test --\n");
+    //be_loadstring(vm, "print('Hello Berry')"); // Compile test code
+    //be_pcall(vm, 0); // Call function
+    //be_loadstring(vm, "a=10");
+    //be_pcall(vm, 0);
+    //be_loadstring(vm, "print(a)");
+    //be_pcall(vm, 0);
+    //printf("------------------\n\n");
 
     while (is_multline(vm) ? (line = linenoise("berry>> ")) != NULL : (line = linenoise("berry>  ")) != NULL) {
         if (line[0] != '\0' && line[0] != '/') {
